@@ -1,0 +1,19 @@
+{
+    "name": "imaluum-scraper",
+    "version": "1.0.0",
+    "description": "Headless browser API for i-Ma'luum",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "puppeteer": "^21.5.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    }
+}

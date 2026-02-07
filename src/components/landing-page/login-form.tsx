@@ -16,13 +16,48 @@ const LoginForm = () => {
 
 	const router = useRouter();
 
+	// Supabase Configuration (Hardcoded for client-side fetching)
+	const SUPABASE_URL = "https://vcwdryhfqriswkmpqzlv.supabase.co";
+	const SUPABASE_ANON = "sb_publishable_M1z7AX7175IJGQLt3TxMVw_5W-37CXy";
+
+	const getScraperUrl = async () => {
+		try {
+			// Try local first for dev
+			const localCheck = await fetch("http://localhost:3001/").catch(() => null);
+			if (localCheck?.ok) return "http://localhost:3001";
+
+			// Fetch from Supabase
+			const res = await fetch(
+				`${SUPABASE_URL}/rest/v1/bot_settings?key=eq.imaluum_scraper_url&select=value`,
+				{
+					headers: {
+						apikey: SUPABASE_ANON,
+						Authorization: `Bearer ${SUPABASE_ANON}`,
+					},
+				},
+			);
+			const data = await res.json();
+			if (data && data[0] && data[0].value && data[0].value.url) {
+				return data[0].value.url;
+			}
+			throw new Error("Could not retrieve Scraper URL");
+		} catch (e) {
+			console.error("Failed to get API URL", e);
+			return null;
+		}
+	};
+
 	const loginMutation = useMutation({
 		mutationKey: ["login"],
 		mutationFn: async ({
 			username,
 			password,
 		}: { username: string; password: string }) => {
-			const res = await fetch("https://api.quddus.my/api/login", {
+
+			const API_URL = await getScraperUrl();
+			if (!API_URL) throw new Error("Scraper is offline");
+
+			const res = await fetch(`${API_URL}/api/login`, {
 				credentials: "include",
 				method: "POST",
 				headers: {
