@@ -1,12 +1,35 @@
 #!/bin/bash
 
 # Configuration
-PORT=3001
-TUNNEL_INTERVAL=3000 # 50 minutes rotation
+# Find .env.local
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Try root .env.local first (since we usually run from root context in dev)
+ENV_FILE="$SCRIPT_DIR/../.env.local"
+if [ ! -f "$ENV_FILE" ]; then
+    # Fallback to local dir
+    ENV_FILE="$SCRIPT_DIR/.env.local"
+fi
 
-# Supabase Credentials (from dopdop project)
-NEXT_PUBLIC_SUPABASE_URL="https://vcwdryhfqriswkmpqzlv.supabase.co"
-SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZjd2RyeWhmcXJpc3drbXBxemx2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDE0NTg5NCwiZXhwIjoyMDg1NzIxODk0fQ.DAu2w4xPcvdfixN617PzFKFRQJx3kZ3HKgaOSOWfTBs"
+if [ -f "$ENV_FILE" ]; then
+    echo "Loading config from $ENV_FILE"
+    set -a
+    source "$ENV_FILE"
+    set +a
+else
+    echo "⚠️  No .env.local found! Please ensure variables are set in environment."
+fi
+
+# Validation
+if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+    echo "❌ Error: Supabase credentials missing."
+    echo "Please set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY in .env.local"
+    exit 1
+fi
+
+# Set defaults if not provided by .env.local or environment
+PORT=${PORT:-3001}
+TUNNEL_INTERVAL=${TUNNEL_INTERVAL:-3000} # 50 minutes rotation
+TUNNEL_HOST=${TUNNEL_HOST:-"a.pinggy.io"}
 
 echo "--- i-Ma'luum Scraper Launcher (Rotating Tunnel) ---"
 
