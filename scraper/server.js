@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-    origin: ['http://localhost:3090', 'http://localhost:3000'], // Allow frontend ports
+    origin: ['http://localhost:3090', 'http://localhost:3000', 'https://imaluum-v2.vercel.app'], // Allow frontend ports & Vercel
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
