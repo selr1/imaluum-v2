@@ -62,6 +62,7 @@ const LoginForm = () => {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
+					"X-Pinggy-No-Screen": "true", // Bypass Pinggy warning
 				},
 				body: JSON.stringify({ username, password }),
 			});
